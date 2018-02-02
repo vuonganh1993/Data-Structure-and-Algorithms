@@ -7,12 +7,22 @@ public:
 	int age;
 	int salary;
 
-	bool CompareDataX(Node<Employee> *other) {
-		return age >= other->GetDeliverClass()->age;
+	int CompareDataX(Node<Employee> *other) {
+		if (age > other->GetDeliverClass()->age)
+			return 1;
+		if (age < other->GetDeliverClass()->age)
+			return -1;
+
+		return 0;
 	}
 
-	bool CompareDataY(Node<Employee> *other) {
-		return salary >= other->GetDeliverClass()->salary;
+	int CompareDataY(Node<Employee> *other) {
+		if (salary > other->GetDeliverClass()->salary)
+			return 1;
+		if (salary < other->GetDeliverClass()->salary)
+			return -1;
+
+		return 0;
 	}
 
 };

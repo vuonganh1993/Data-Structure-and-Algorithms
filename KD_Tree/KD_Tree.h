@@ -1,9 +1,7 @@
 #ifndef _KDTREE_H_
 #define _KDTREE_H_
 #include "KD_TreeNode.h"
-
-template <typename T>
-class Node;
+#include <stack>
 template <typename T>
 class KD_Tree 
 {
@@ -12,52 +10,112 @@ private:
 
 	void release(Node<T> *pRoot)
 	{
-		Node<T> *p = pRoot->GetLeft();
-		if (p != nullptr)
+		if (pRoot != nullptr)
 		{
-			release(Node<T> *pRoot)
+			release(pRoot->GetLeft());
+			release(pRoot->GetRight());
+			delete pRoot;
 		}
+	}
+
+private:
+	void Search(Node<T> *min, Node<T> *max, Node<T>* pRoot, std::stack<Node<T>*> &stack)
+	{
+
+		Node<T>* p = root;
+		while (p!= nullptr)
+		{
+			if (p->CompareDataX(min) == 1 && p->CompareDataX(max) == -1 && p->CompareDataY(min) == 1 && p->CompareDataY(max) == -1)
+			{
+				stack.push(p);
+			}
+
+			if (p->GetDime() == X)
+			{
+				if (p->CompareDataX(min) == -1)
+					Search(min, max, p->GetRight(), stack);
+				else
+					if (p->CompareDataX(max) == 1)
+						Search(min, max, p->GetLeft(), stack)
+			}
+			else
+			{
+				if (p->GetDime() == Y)
+				{
+					if (p->CompareDataY(min) == -1)
+						Search(min, max, p->GetRight(), stack);
+					else
+						if (p->CompareDataY(max) == 1)
+							Search(min, max, p->GetLeft(), stack);
+				}
+			}
+
+
+		}
+
 	}
 public:
 	KD_Tree():
+		root(nullptr)
 	{}
 	~KD_Tree()
-	{}
+	{
+		release(root);
+	}
 
 	void Insert(Node<T> *node)
 	{
 		if (root == nullptr)
 		{
 			root = node;
+			root->SetDime(X);
 		}
 		else
 		{
 			Node<T> *p = root;
-			if (root->CompareDataX(node)) { //compare x with root
-				p = root->GetLeft();
-			}
-			else
-			{
-				p = root->GetRight();
-			}
+			Dimensional preDi;
 
 			while (p != nullptr)
 			{
-				if (p->CompareDataY(node)) //true: p's y > node's y
+				preDi = p->GetDime();
+				if (preDi == X)
 				{
-					p = p->GetLeft();
+					if (p->CompareDataX(node))  //true: p's x > node's x
+					{
+						p = p->GetLeft();
+					}
+					else //node's x >= p's X
+					{
+						p = p->GetRight();
+					}
 				}
 				else
 				{
-					p = p->GetRight();
+					if (p->CompareDataY(node))  //true: p's y > node's y
+					{
+						p = p->GetLeft();
+					}
+					else // p's y < node's y
+					{
+						p = p->GetRight();
+					}
 				}
 			}
 			p = node;
+			preDi == X ? Y : X;
+			p->SetDime(preDi);
 		}
 			
 	}
-	void Search()
-	{}
+	
+	void Search(Node<T> *min, Node<T> *max)
+	{
+		std::stack<Node<T>*> stack;
+		Search(min, max, root, stack);
+
+
+	}
+
 	void Remove()
 	{}
 
