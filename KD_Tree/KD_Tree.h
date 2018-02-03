@@ -104,11 +104,18 @@ public:
 		std::stack<Node<T>*> stack;
 		search(min, max, root, stack);
 
+		cout << "\nMin: ";
+		min->output();
+		cout << "\n\n";
+
 		while (!stack.empty())
 		{
 			stack.top()->output();
 			stack.pop();
 		}
+
+		cout << "\n\nMax: ";
+		max->output();
 	}
 
 	void Remove()

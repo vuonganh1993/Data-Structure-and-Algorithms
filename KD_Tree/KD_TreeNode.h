@@ -37,7 +37,6 @@ public:
 
 	bool operator>=(const Node<T>& other)
 	{
-		cout << " haha";
 		return	(CompareDataX((Node<T>*)&other) == 1 || CompareDataX((Node<T>*)&other) == 0) &&
 			(CompareDataY((Node<T>*)&other) == 1 || CompareDataY((Node<T>*)&other) == 0);
 	}

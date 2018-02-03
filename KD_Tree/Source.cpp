@@ -6,7 +6,7 @@ using namespace std;
 class Employee : public Node<Employee> {
 private:
 	int age;
-	int salary;
+	int salary; 
 public:
 	Employee(int _age, int _salary) :
 	Node<Employee>::Node(this),
@@ -48,7 +48,7 @@ public:
 	void output()
 	{
 		cout << "\nAge: " << age;
-		cout << "\nSalary: " << salary;
+		cout << "\nSalary: " << salary << endl;
 	}
 };
 
@@ -62,7 +62,7 @@ int main()
 	kdtree->Insert(new Employee(19, 500));
 	kdtree->Insert(new Employee(15, 100));
 
-	kdtree->Search(&Employee(15, 100), &Employee(31, 2001));
+	kdtree->Search(&Employee(10, 100), &Employee(31, 1000));
 
 	system("pause");
 	delete kdtree;
