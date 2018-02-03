@@ -19,40 +19,35 @@ private:
 	}
 
 private:
-	void Search(Node<T> *min, Node<T> *max, Node<T>* pRoot, std::stack<Node<T>*> &stack)
+	void search(Node<T> *min, Node<T> *max, Node<T>* pRoot, std::stack<Node<T>*> &stack)
 	{
-
-		Node<T>* p = root;
-		while (p!= nullptr)
+		if (pRoot!= nullptr)
 		{
-			if (p->CompareDataX(min) == 1 && p->CompareDataX(max) == -1 && p->CompareDataY(min) == 1 && p->CompareDataY(max) == -1)
+			if (*pRoot >= *min && *pRoot <= *max)
 			{
-				stack.push(p);
-			}
-
-			if (p->GetDime() == X)
-			{
-				if (p->CompareDataX(min) == -1)
-					Search(min, max, p->GetRight(), stack);
-				else
-					if (p->CompareDataX(max) == 1)
-						Search(min, max, p->GetLeft(), stack)
+				stack.push(pRoot);
+				search(min, max, pRoot->GetLeft(), stack);
+				search(min, max, pRoot->GetRight(), stack);
 			}
 			else
+			if (pRoot->GetDime() == Dimensional::X)
 			{
-				if (p->GetDime() == Y)
-				{
-					if (p->CompareDataY(min) == -1)
-						Search(min, max, p->GetRight(), stack);
-					else
-						if (p->CompareDataY(max) == 1)
-							Search(min, max, p->GetLeft(), stack);
-				}
+				if (pRoot->CompareDataX(max) == 1)
+					search(min, max, pRoot->GetLeft(), stack);
+				else
+				if (pRoot->CompareDataX(min) == -1 || pRoot->CompareDataX(min) == 0)
+					search(min, max, pRoot->GetRight(), stack);
 			}
-
-
+			else
+			if (pRoot->GetDime() == Dimensional::Y)
+			{
+				if (pRoot->CompareDataY(max) == 1)
+					search(min, max, pRoot->GetLeft(), stack);
+				else
+				if (pRoot->CompareDataY(min) == -1 || pRoot->CompareDataY(min) == 0)
+					search(min, max, pRoot->GetRight(), stack);
+			}
 		}
-
 	}
 public:
 	KD_Tree():
@@ -68,52 +63,52 @@ public:
 		if (root == nullptr)
 		{
 			root = node;
-			root->SetDime(X);
+			root->SetDime(Dimensional::X);
 		}
 		else
 		{
 			Node<T> *p = root;
-			Dimensional preDi;
+			Node<T> *fp = nullptr;
+			
+			int direc = 0; //0 right, 1 left
 
 			while (p != nullptr)
 			{
-				preDi = p->GetDime();
-				if (preDi == X)
+				fp = p;
+				if ((p->GetDime() == Dimensional::X && p->CompareDataX(node) == 1) || (p->GetDime() == Dimensional::Y && p->CompareDataY(node) == 1))
 				{
-					if (p->CompareDataX(node))  //true: p's x > node's x
-					{
-						p = p->GetLeft();
-					}
-					else //node's x >= p's X
-					{
-						p = p->GetRight();
-					}
+					p = p->GetLeft();
+					direc = 1;
 				}
-				else
-				{
-					if (p->CompareDataY(node))  //true: p's y > node's y
-					{
-						p = p->GetLeft();
-					}
-					else // p's y < node's y
-					{
-						p = p->GetRight();
-					}
+				else {
+					p = p->GetRight();
+					direc = 0;
 				}
 			}
-			p = node;
-			preDi == X ? Y : X;
-			p->SetDime(preDi);
-		}
 			
+ 			if (fp->GetDime() == Dimensional::X)
+				node->SetDime(Dimensional::Y);
+			else
+				node->SetDime(Dimensional::X);
+
+			if(direc)
+				fp->SetLeft(node);
+			else
+				fp->SetRight(node);			
+		}
+		
 	}
 	
 	void Search(Node<T> *min, Node<T> *max)
 	{
 		std::stack<Node<T>*> stack;
-		Search(min, max, root, stack);
+		search(min, max, root, stack);
 
-
+		while (!stack.empty())
+		{
+			stack.top()->output();
+			stack.pop();
+		}
 	}
 
 	void Remove()
